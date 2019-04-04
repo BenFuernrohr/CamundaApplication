@@ -5,7 +5,6 @@
     <bpmn:participant id="Participant_0nv4805" name="Unternehmen" processRef="Company_process" />
     <bpmn:messageFlow id="MessageFlow_0809s8k" sourceRef="Participant_00uiudu" targetRef="StartEvent_1" />
     <bpmn:messageFlow id="MessageFlow_0se9yvq" sourceRef="requestAdditionalInformations" targetRef="Participant_00uiudu" />
-    <bpmn:messageFlow id="MessageFlow_0cdyti6" sourceRef="Participant_00uiudu" targetRef="waitingForAdditionalInformations" />
     <bpmn:messageFlow id="MessageFlow_1n9mx5b" sourceRef="IntermediateThrowEvent_0mkps6i" targetRef="Participant_00uiudu" />
     <bpmn:messageFlow id="MessageFlow_17kym6d" sourceRef="approveApplicant" targetRef="Participant_00uiudu" />
     <bpmn:messageFlow id="MessageFlow_0vor2rd" sourceRef="declineApplicant" targetRef="Participant_00uiudu" />
@@ -24,8 +23,7 @@
     <bpmn:sequenceFlow id="SequenceFlow_1uaxttl" name="nein" sourceRef="ExclusiveGateway_1xnj33m" targetRef="requestAdditionalInformations">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${!application_complete}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="SequenceFlow_130xzxp" sourceRef="requestAdditionalInformations" targetRef="waitingForAdditionalInformations" />
-    <bpmn:sequenceFlow id="SequenceFlow_1t8r51m" sourceRef="IntermediateThrowEvent_03bz047" targetRef="declineApplicant" />
+    <bpmn:sequenceFlow id="SequenceFlow_130xzxp" sourceRef="requestAdditionalInformations" targetRef="Task_1y2mg8s" />
     <bpmn:sequenceFlow id="SequenceFlow_119gfws" name="abgelehnt" sourceRef="qualifyApplicant" targetRef="declineApplicant">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${!approved}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
@@ -38,7 +36,7 @@
     </bpmn:sequenceFlow>
     <bpmn:serviceTask id="checkApplication" name="Bewerbung prüfen" camunda:class="camunda.learning.examples.application.delegates.ApplicationTester">
       <bpmn:incoming>SequenceFlow_1pyq2os</bpmn:incoming>
-      <bpmn:incoming>SequenceFlow_1hj2gpo</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_1gea68m</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1scllrn</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:exclusiveGateway id="ExclusiveGateway_1yllchs" name="Gespräch gut gelaufen?">
@@ -58,10 +56,10 @@
       <bpmn:sequenceFlow id="SequenceFlow_16ow9oo" sourceRef="IntermediateThrowEvent_0ug1961" targetRef="EndEvent_0eqt59x" />
     </bpmn:subProcess>
     <bpmn:endEvent id="declineApplicant" name="Bewerber absagen">
-      <bpmn:incoming>SequenceFlow_1t8r51m</bpmn:incoming>
       <bpmn:incoming>SequenceFlow_119gfws</bpmn:incoming>
       <bpmn:incoming>SequenceFlow_0up7o29</bpmn:incoming>
       <bpmn:incoming>SequenceFlow_0xyw85w</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_0lb80tu</bpmn:incoming>
       <bpmn:messageEventDefinition id="MessageEventDefinition_13gzc6j" camunda:class="camunda.learning.examples.application.messages.ApplicationDenialSender" />
     </bpmn:endEvent>
     <bpmn:startEvent id="StartEvent_1" name="Bewerbung eingegangen">
@@ -111,11 +109,6 @@
         <bpmn:completionCondition>${Positive_Impression}</bpmn:completionCondition>
       </bpmn:multiInstanceLoopCharacteristics>
     </bpmn:userTask>
-    <bpmn:intermediateCatchEvent id="waitingForAdditionalInformations" name="Ergänzungen gehen ein">
-      <bpmn:incoming>SequenceFlow_130xzxp</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_1hj2gpo</bpmn:outgoing>
-      <bpmn:messageEventDefinition messageRef="Message_1bobvwe" />
-    </bpmn:intermediateCatchEvent>
     <bpmn:exclusiveGateway id="ExclusiveGateway_1xnj33m" name="Bewerbung vollständig?">
       <bpmn:incoming>SequenceFlow_1scllrn</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1uaxttl</bpmn:outgoing>
@@ -125,13 +118,6 @@
       <bpmn:incoming>SequenceFlow_1uaxttl</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_130xzxp</bpmn:outgoing>
     </bpmn:sendTask>
-    <bpmn:intermediateCatchEvent id="IntermediateThrowEvent_03bz047" name="Abbruch nach 7 Tagen">
-      <bpmn:outgoing>SequenceFlow_1t8r51m</bpmn:outgoing>
-      <bpmn:timerEventDefinition>
-        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT7D</bpmn:timeDuration>
-      </bpmn:timerEventDefinition>
-    </bpmn:intermediateCatchEvent>
-    <bpmn:sequenceFlow id="SequenceFlow_1hj2gpo" sourceRef="waitingForAdditionalInformations" targetRef="checkApplication" />
     <bpmn:userTask id="qualifyApplicant" name="Vorqualifizierung" camunda:assignee="admin">
       <bpmn:extensionElements>
         <camunda:formData>
@@ -142,6 +128,18 @@
       <bpmn:outgoing>SequenceFlow_119gfws</bpmn:outgoing>
       <bpmn:outgoing>SequenceFlow_0h3k3nt</bpmn:outgoing>
     </bpmn:userTask>
+    <bpmn:sequenceFlow id="SequenceFlow_1gea68m" sourceRef="Task_1y2mg8s" targetRef="checkApplication" />
+    <bpmn:receiveTask id="Task_1y2mg8s" name="Ergänzungen gehen ein">
+      <bpmn:incoming>SequenceFlow_130xzxp</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1gea68m</bpmn:outgoing>
+    </bpmn:receiveTask>
+    <bpmn:boundaryEvent id="BoundaryEvent_10hz5jm" name="Abbruch nach 7 Tagen" attachedToRef="Task_1y2mg8s">
+      <bpmn:outgoing>SequenceFlow_0lb80tu</bpmn:outgoing>
+      <bpmn:timerEventDefinition>
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT7D</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0lb80tu" sourceRef="BoundaryEvent_10hz5jm" targetRef="declineApplicant" />
   </bpmn:process>
   <bpmn:message id="Message_0g61zlf" name="newApplication" />
   <bpmn:message id="Message_0so59yp" name="cancellation" />
@@ -152,7 +150,7 @@
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1lkyaqw">
       <bpmndi:BPMNShape id="Participant_15wkf2l_di" bpmnElement="Participant_00uiudu">
-        <dc:Bounds x="64" y="-34" width="1287" height="197" />
+        <dc:Bounds x="64" y="47" width="1282" height="116" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Participant_0nv4805_di" bpmnElement="Participant_0nv4805">
         <dc:Bounds x="64" y="191" width="1292" height="536" />
@@ -177,12 +175,6 @@
         <dc:Bounds x="1291" y="538" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="1285" y="581" width="49" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="IntermediateCatchEvent_1i018by_di" bpmnElement="waitingForAdditionalInformations">
-        <dc:Bounds x="346" y="407" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="331" y="450" width="66" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="SendTask_0qkgnh3_di" bpmnElement="requestAdditionalInformations">
@@ -221,14 +213,9 @@
           <dc:Bounds x="114" y="327" width="64" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_1t8r51m_di" bpmnElement="SequenceFlow_1t8r51m">
-        <di:waypoint x="481" y="486" />
-        <di:waypoint x="481" y="556" />
-        <di:waypoint x="1291" y="556" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_130xzxp_di" bpmnElement="SequenceFlow_130xzxp">
         <di:waypoint x="415" y="425" />
-        <di:waypoint x="382" y="425" />
+        <di:waypoint x="325" y="425" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1uaxttl_di" bpmnElement="SequenceFlow_1uaxttl">
         <di:waypoint x="465" y="327" />
@@ -273,10 +260,6 @@
       <bpmndi:BPMNEdge id="MessageFlow_0se9yvq_di" bpmnElement="MessageFlow_0se9yvq">
         <di:waypoint x="427" y="385" />
         <di:waypoint x="427" y="163" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="MessageFlow_0cdyti6_di" bpmnElement="MessageFlow_0cdyti6">
-        <di:waypoint x="364" y="163" />
-        <di:waypoint x="364" y="407" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="MessageFlow_1n9mx5b_di" bpmnElement="MessageFlow_1n9mx5b">
         <di:waypoint x="983" y="284" />
@@ -355,16 +338,23 @@
           <dc:Bounds x="903" y="439" width="21" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="IntermediateCatchEvent_1cmnpyp_di" bpmnElement="IntermediateThrowEvent_03bz047">
-        <dc:Bounds x="463" y="450" width="36" height="36" />
+      <bpmndi:BPMNEdge id="SequenceFlow_1gea68m_di" bpmnElement="SequenceFlow_1gea68m">
+        <di:waypoint x="275" y="385" />
+        <di:waypoint x="275" y="342" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ReceiveTask_0v9v3ju_di" bpmnElement="Task_1y2mg8s">
+        <dc:Bounds x="225" y="385" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BoundaryEvent_1hgrut4_di" bpmnElement="BoundaryEvent_10hz5jm">
+        <dc:Bounds x="268" y="447" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="498" y="476" width="77" height="27" />
+          <dc:Bounds x="307" y="474" width="77" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_1hj2gpo_di" bpmnElement="SequenceFlow_1hj2gpo">
-        <di:waypoint x="346" y="425" />
-        <di:waypoint x="275" y="425" />
-        <di:waypoint x="275" y="342" />
+      <bpmndi:BPMNEdge id="SequenceFlow_0lb80tu_di" bpmnElement="SequenceFlow_0lb80tu">
+        <di:waypoint x="286" y="483" />
+        <di:waypoint x="286" y="556" />
+        <di:waypoint x="1291" y="556" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
