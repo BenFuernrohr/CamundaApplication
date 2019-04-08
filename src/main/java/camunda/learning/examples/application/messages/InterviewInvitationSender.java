@@ -2,7 +2,14 @@ package camunda.learning.examples.application.messages;
 
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
+import org.springframework.stereotype.Component;
 
+/**
+ * Message implementation for inviting an applicant to an interview.
+ * 
+ * @author Ben Fuernrohr
+ */
+@Component
 public class InterviewInvitationSender implements JavaDelegate {
 
     @Override

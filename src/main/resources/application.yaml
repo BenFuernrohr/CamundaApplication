@@ -5,3 +5,5 @@ camunda.bpm:
     firstName: admin
   filter:
     create: All tasks
+
+server.port: 8080

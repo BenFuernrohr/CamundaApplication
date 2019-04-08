@@ -2,7 +2,14 @@ package camunda.learning.examples.application.messages;
 
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
+import org.springframework.stereotype.Component;
 
+/**
+ * Message implementation for declining an application.
+ * 
+ * @author Ben Fuernrohr
+ */
+@Component
 public class ApplicationDenialSender implements JavaDelegate {
 
     @Override

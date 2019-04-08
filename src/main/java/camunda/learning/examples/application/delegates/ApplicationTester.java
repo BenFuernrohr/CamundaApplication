@@ -2,7 +2,14 @@ package camunda.learning.examples.application.delegates;
 
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
+import org.springframework.stereotype.Component;
 
+/**
+ * Service Task implementation for validating a new application.
+ * 
+ * @author Ben Fuernrohr
+ */
+@Component
 public class ApplicationTester implements JavaDelegate {
 
     @Override

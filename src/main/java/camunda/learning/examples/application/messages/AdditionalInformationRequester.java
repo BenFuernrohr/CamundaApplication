@@ -2,7 +2,14 @@ package camunda.learning.examples.application.messages;
 
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
+import org.springframework.stereotype.Component;
 
+/**
+ * Message implementation for requesting additional information.
+ * 
+ * @author Ben Fuernrohr
+ */
+@Component
 public class AdditionalInformationRequester implements JavaDelegate {
 
     @Override
