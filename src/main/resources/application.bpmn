@@ -74,7 +74,7 @@
     <bpmn:userTask id="getOpinion" name="Meinung anfordern" camunda:assignee="admin">
       <bpmn:extensionElements>
         <camunda:formData>
-          <camunda:formField id="Positive_Impression" label="Positive Impression" type="boolean" />
+          <camunda:formField id="positive_Impression" label="Positive Impression" type="boolean" />
         </camunda:formData>
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_0h3k3nt</bpmn:incoming>
