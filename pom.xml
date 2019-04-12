@@ -38,7 +38,7 @@
 			<artifactId>h2</artifactId>
 			<scope>runtime</scope>
 		</dependency>
-<!--
+
 		<dependency>
 			<groupId>org.camunda.bpm.springboot</groupId>
 			<artifactId>camunda-bpm-spring-boot-starter-test</artifactId>
@@ -46,11 +46,19 @@
 			<scope>test</scope>
 		</dependency>
 
-		 Easier assertions for testing -->
+		<!-- Camund extension for easier assertions -->
 		<dependency>
 			<groupId>org.camunda.bpm.extension</groupId>
 			<artifactId>camunda-bpm-assert</artifactId>
 			<version>2.0-alpha2</version>
+			<scope>test</scope>
+		</dependency>
+		
+		<!-- Required for assertion framework -->
+		<dependency>
+			<groupId>org.assertj</groupId>
+			<artifactId>assertj-core</artifactId>
+			<version>2.5.0</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -62,41 +70,12 @@
 			<scope>test</scope>
 		</dependency>
 
-		<!-- Camunda test process coverage -->
+		<!-- Camunda process coverage -->
 		<dependency>
 			<groupId>org.camunda.bpm.extension</groupId>
 			<artifactId>camunda-bpm-process-test-coverage</artifactId>
 			<version>0.3.2</version>
 			<scope>test</scope>
 		</dependency>
-
-		<!-- Required for interaction of camunda assert and spring boot imported 
-			assertion libraries -->
-		<dependency>
-			<groupId>org.assertj</groupId>
-			<artifactId>assertj-core</artifactId>
-			<version>2.5.0</version>
-			<scope>test</scope>
-		</dependency>
 	</dependencies>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-				<configuration>
-					<layout>ZIP</layout>
-				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>repackage</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
-
 </project>
