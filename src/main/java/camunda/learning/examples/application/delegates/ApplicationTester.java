@@ -4,6 +4,8 @@ import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.springframework.stereotype.Component;
 
+import camunda.learning.examples.application.variables.ApplicationProcessVariables;
+
 /**
  * Service Task implementation for validating a new application.
  * 
@@ -14,7 +16,9 @@ public class ApplicationTester implements JavaDelegate {
 
     @Override
     public void execute(DelegateExecution execution) {
-        String message = (String) execution.getVariable("applicationContent");
+        ApplicationProcessVariables variables = new ApplicationProcessVariables(execution);
+
+        String message = variables.getApplicationContent();
         if (message.length() < 10) {
             System.out.println("Application invalid!");
             execution.setVariable("application_complete", false);
